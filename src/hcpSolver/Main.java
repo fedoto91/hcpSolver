@@ -42,6 +42,12 @@ public class Main {
 			if (readEdges == true) {
 				nodeA = Integer.parseInt(tokens[0]);
 				nodeB = Integer.parseInt(tokens[1]);
+				if (nodeA < nodeB)
+				{
+					int temp = nodeB;
+					nodeB = nodeA;
+					nodeA = temp;
+				}
 				createHcpEdge(nodeA, nodeB);
 				createTspEdge(nodeA, nodeB);
 			}
