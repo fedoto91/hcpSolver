@@ -51,7 +51,7 @@ public class Main {
 
 	private void writer() throws FileNotFoundException,
 			UnsupportedEncodingException {
-		PrintWriter writer = new PrintWriter("hcp.tsp", "UTF-8");
+		PrintWriter writer = new PrintWriter("square.tsp", "UTF-8");
 		writer.println("NAME : square");
 		writer.println("COMMENT : four nodes arranged in a “square”");
 		writer.println("TYPE : TSP");
@@ -59,6 +59,24 @@ public class Main {
 		writer.println("EDGE_WEIGHT_TYPE: EXPLICIT");
 		writer.println("EDGE_WEIGHT_FORMAT: LOWER_DIAG_ROW");
 		writer.println("EDGE_WEIGHT_SECTION");
+		for (int i = 1; i <= dim; i++)
+			for (int j =1; j < hcpMatrix[i].length; j++) {
+				{
+					int value = tspMatrix[i][j];
+					
+					if (value == 0) {
+						writer.println(0);
+					}
+					if (value == 1) {
+						writer.println(1);
+					}
+					if (value == 2) {
+						writer.println(2);
+					}
+
+				}
+			}
+		writer.println("EOF");
 		writer.close();
 	}
 
@@ -74,7 +92,7 @@ public class Main {
 		// false = 0, true = 1
 		hcpMatrix[row][col] = true;
 	}
-	
+
 	private void createTspMatrix() {
 		tspMatrix = new int[dim + 1][];
 		for (int i = 0; i <= dim; ++i) {
@@ -83,18 +101,18 @@ public class Main {
 	}
 
 	private void createTspEdge(int row, int col) {
-		for (int i = 0; i <= dim; i++)
-		{
-			for (int j = 0; j < hcpMatrix[i].length; j++)
-			{
-				if (hcpMatrix[i][j] == true)
-				{
-					tspMatrix[i][j] = 1;
+		for (int i = 0; i <= dim; i++) {
+			for (int j = 0; j < hcpMatrix[i].length; j++) {
+				if (i == j) {
+					tspMatrix[i][j] = 0;
+				} else {
+					if (hcpMatrix[i][j] == true) {
+						tspMatrix[i][j] = 1;
+					} else {
+						tspMatrix[i][j] = 2;
+					}
 				}
-				else
-				{
-					tspMatrix[i][j] = 2;
-				}
+
 			}
 		}
 	}
