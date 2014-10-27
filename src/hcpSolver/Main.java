@@ -9,8 +9,11 @@ import java.util.Scanner;
 public class Main {
 
 	private int dim = 0;
+	private boolean[][] hcpMatrix;
+	private int[][] tspMatrix;
 
-	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+	public static void main(String[] args) throws FileNotFoundException,
+			UnsupportedEncodingException {
 		Main main = new Main();
 		main.reader(args[0]);
 		main.writer();
@@ -18,16 +21,17 @@ public class Main {
 
 	private void reader(String filename) throws FileNotFoundException {
 		Scanner s = new Scanner(new File(filename));
-
 		boolean readEdges = false;
 		while (s.hasNextLine()) {
 
 			String tokens[] = s.nextLine().split(" ");
 
-			int x, y;
+			int nodeA, nodeB;
 
 			if (tokens[0].equals("DIMENSION")) {
 				dim = Integer.parseInt(tokens[2]);
+				createHcpMatrix();
+				createTspMatrix();
 			}
 
 			if (tokens[0].equals("EDGE_DATA_SECTION")) {
@@ -36,12 +40,13 @@ public class Main {
 			}
 
 			if (readEdges == true) {
-				x = Integer.parseInt(tokens[0]);
-				y = Integer.parseInt(tokens[1]);
-				System.out.printf("%d %d\n", x, y);
+				nodeA = Integer.parseInt(tokens[0]);
+				nodeB = Integer.parseInt(tokens[1]);
+				createHcpEdge(nodeA, nodeB);
+				createTspEdge(nodeA, nodeB);
 			}
-
 		}
+		s.close();
 	}
 
 	private void writer() throws FileNotFoundException,
@@ -55,5 +60,42 @@ public class Main {
 		writer.println("EDGE_WEIGHT_FORMAT: LOWER_DIAG_ROW");
 		writer.println("EDGE_WEIGHT_SECTION");
 		writer.close();
+	}
+
+	private void createHcpMatrix() {
+		hcpMatrix = new boolean[dim + 1][];
+		for (int i = 0; i <= dim; ++i) {
+			hcpMatrix[i] = new boolean[i + 1];
+		}
+	}
+
+	private void createHcpEdge(int row, int col) {
+		// assume row > col
+		// false = 0, true = 1
+		hcpMatrix[row][col] = true;
+	}
+	
+	private void createTspMatrix() {
+		tspMatrix = new int[dim + 1][];
+		for (int i = 0; i <= dim; ++i) {
+			tspMatrix[i] = new int[i + 1];
+		}
+	}
+
+	private void createTspEdge(int row, int col) {
+		for (int i = 0; i <= dim; i++)
+		{
+			for (int j = 0; j < hcpMatrix[i].length; j++)
+			{
+				if (hcpMatrix[i][j] == true)
+				{
+					tspMatrix[i][j] = 1;
+				}
+				else
+				{
+					tspMatrix[i][j] = 2;
+				}
+			}
+		}
 	}
 }
