@@ -11,6 +11,7 @@ public class Main {
 	private int dim = 0;
 	private boolean[][] hcpMatrix;
 	private int[][] tspMatrix;
+	private String fName;
 
 	public static void main(String[] args) throws FileNotFoundException,
 			UnsupportedEncodingException {
@@ -22,11 +23,22 @@ public class Main {
 	private void reader(String filename) throws FileNotFoundException {
 		Scanner s = new Scanner(new File(filename));
 		boolean readEdges = false;
-		while (s.hasNextLine()) {
+		boolean done = false;
+		while (s.hasNextLine() && !done) {
 
-			String tokens[] = s.nextLine().split(" ");
+			String tokens[] = s.nextLine().trim().split("\\s+");
+			
+			if (tokens[0].equals("-1"))
+			{
+				break;
+			}
 
 			int nodeA, nodeB;
+
+			if (tokens[0].contains("NAME")) {	
+				fName = tokens[2];
+
+			}
 
 			if (tokens[0].equals("DIMENSION")) {
 				dim = Integer.parseInt(tokens[2]);
@@ -36,7 +48,7 @@ public class Main {
 
 			if (tokens[0].equals("EDGE_DATA_SECTION")) {
 				readEdges = true;
-				tokens = s.nextLine().split(" ");
+				tokens = s.nextLine().trim().split("\\s+");
 			}
 
 			if (readEdges == true) {
@@ -57,9 +69,9 @@ public class Main {
 
 	private void writer() throws FileNotFoundException,
 			UnsupportedEncodingException {
-		PrintWriter writer = new PrintWriter("square.tsp", "UTF-8");
-		writer.println("NAME : square");
-		writer.println("COMMENT : four nodes arranged in a “square”");
+		PrintWriter writer = new PrintWriter(fName+".tsp", "UTF-8");
+		writer.println("NAME : "+fName);
+		writer.println("COMMENT : ");
 		writer.println("TYPE : TSP");
 		writer.println("DIMENSION : " + dim);
 		writer.println("EDGE_WEIGHT_TYPE: EXPLICIT");
@@ -70,9 +82,6 @@ public class Main {
 				{
 					int value = tspMatrix[i][j];
 					
-					if (value == 0) {
-						writer.println(0);
-					}
 					if (value == 1) {
 						writer.println(1);
 					}
@@ -82,6 +91,7 @@ public class Main {
 
 				}
 			}
+		writer.println(-1);
 		writer.println("EOF");
 		writer.close();
 	}
@@ -110,7 +120,7 @@ public class Main {
 		for (int i = 0; i <= dim; i++) {
 			for (int j = 0; j < hcpMatrix[i].length; j++) {
 				if (i == j) {
-					tspMatrix[i][j] = 0;
+					tspMatrix[i][j] = 2;
 				} else {
 					if (hcpMatrix[i][j] == true) {
 						tspMatrix[i][j] = 1;
